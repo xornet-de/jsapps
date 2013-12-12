@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="us">
+<head>
+	<meta charset="utf-8">
+	<title>PROZIM</title>
+	<!--<link href="css/ui-lightness/jquery-ui-1.10.3.custom.css" rel="stylesheet">-->
+	<link href="css/vader/jquery-ui-1.10.3.custom.css" rel="stylesheet">
+	<script src="lib/ui/jquery-1.9.1.js"></script>
+	<script src="lib/ui/jquery-ui-1.10.3.custom.js"></script>
+	<script src="lib/ui/jquery.jeditable.js"></script>
+	<script src="lib/prozim/prozim.js"></script>
+	<script src="lib/jcanvas.js"></script>
+	<script>
+		$(function(){
+			init();
+		}); // on ready function
+	</script>
+	<style>
+		@import url("css/prozim/prozim.css");
+	</style>
+</head>
+<body>
+	<div id="header">
+		<strong>PROZIM</strong> <small><em>Simulation eines einfachen Prozessors</em></small>
+		<!-- nur IE Speicher: <span id="freememory"></span>-->
+		<hr/>
+	</div>
+	<div id="ListContainer">
+		<div id="MainToolbar">
+			<div id="ButtonStep"><img src="css/prozim/images/play.png" alt="&gt;" /></div>
+			<input type="checkbox" id="CheckRun" /><label for="CheckRun"><img src="css/prozim/images/autoplay.png" alt="&gt;&gt;" /></label>
+			<div id="ButtonReset"><img src="css/prozim/images/rewind.png" alt="Zurück" /></div>
+		</div>
+		<div id="CommandList">
+			<ul>
+			</ul>
+		</div>
+	</div><!-- listcontainer -->
+	
+	<div id="Container">
+		<div id="FileToolbar">
+			<div id="ButtonClear" title="Leeren"><img src="css/prozim/images/edit_clear.png" alt="Leeren" /></div>
+			<div id="FileOpen" title="Öffnen ..."><img src="css/prozim/images/open.png" alt="Öffnen" /></div>
+			<div id="FileSave" title="Speichern ..."><img src="css/prozim/images/save.png" alt="Speichern" /></div>
+			<div id="FileJson" title="Import / Export"><img src="css/prozim/images/import_export.png" alt="Import/Export" /></div>&nbsp;&nbsp;
+			<div id="Hilfe">Hilfe</div>
+		</div>
+		<hr/>
+		<div id="RegContainer">
+		</div>
+		<hr/>
+		<div id="RamContainer">
+		</div>
+	</div>
+	
+	<div id="jsondialog" title="JSON">
+		<div class="dialogcontent"></div>
+	</div>
+	
+	<div id="savedialog" title="Speichern">
+		<p>Geben Sie einen neuen Namen an, oder wählen Sie einen aus der Liste:</p>
+		<p>
+			<input class="ui-corner-all filename" value="" />
+		</p>
+		<ul class="filelist"></ul>
+	</div>
+	
+	<div id="opendialog" title="Öffnen">
+		<p>Wählen Sie aus der Liste einen Namen aus:</p>
+		<p>
+			<input class="ui-corner-all filename" value="" readonly="readonly" />
+		</p>
+		<ul class="filelist"></ul>
+	</div>
+	
+	
+	<div id="robodialog" title="Robo">
+		<canvas width="300" height="300" id="roboCanvas"></canvas>
+	</div>
+	
+	<div id="helpdialog" title="Hilfe">
+		<h3>Einführung</h3>
+		<p>
+			Diese Rechenmaschine kann über eine Maschinensprache
+			mit nur sehr wenigen Operationen programmiert werden.
+		</p>
+		<p>
+			Klicken Sie auf <span class="helpplus">&nbsp;&nbsp;+&nbsp;&nbsp;</span>,
+			um einen neuen Befehl zu erstellen. Ein Befehl besteht meist aus zwei Teilen:
+			einem Kommando und einem Parameter. Zum Beispiel: <code>add&nbsp;7</code>,
+			um die Zahl 7 zu addieren. Die Operationen beziehen sich ansonsten auf
+			das Register <code>a</code>: <code>add&nbsp;7</code> addiert 7 zum aktuellen
+			Wert von <code>a</code>.
+		</p>
+		<p>
+			
+		</p>
+		
+		<h3>Ideen</h3>
+		<ul>
+			<li>Versuchen Sie ein Programm zu schreiben, das zwei Werte aus dem Speicher
+			addiert und das Ergebnis in den Speicher zurück schreibt.</li>
+			<li>Versuchen Sie ein Programm zu schreiben, das die Werte
+			zweier Speicherplätze vertauscht.</li>
+		</ul>
+		
+		<h3>Befehle</h3>
+		<table>
+			<thead>
+			<tr><th>Schreibweise</th><th>Bedeutung</th><th>Erklärung</th></tr>
+			</thead>
+			<tr><td><strong><code>lade&nbsp;<em>X</em></code></strong></td><td>A:=X (*)</td><td>Lade einen Wert aus X ins Register A.</td></tr>
+			<tr><td><strong><code>schreibe&nbsp;<em>X</em></code></strong></td><td>X:=A (*)</td><td>Speicher den Wert des Registers A nach X</td></tr>
+			<tr><td><strong><code>add&nbsp;<em>X</em></code></strong></td><td>A:=A+X (*)</td><td>Addiere den Wert aus X zu A.</td></tr>
+			<tr><td><strong><code>sub&nbsp;<em>X</em></code></strong></td><td>A:=A-X (*)</td><td>Subtrahiere den Wert aus X von A.</td></tr>
+			
+			<tr><td><strong><code>zu&nbsp;<em>X</em></code></strong></td><td>PZ:=X</td><td>Setze Programm bei Befehl X fort.</td></tr>
+			<tr><td><strong><code>springe&nbsp;<em>X</em></code></strong></td><td>PZ:=PZ+X</td><td>Relativer Sprung.</td></tr>
+			
+			<tr><td><strong><code>zu(0)&nbsp;<em>X</em></code></strong></td><td>PZ:=X</td><td>Setze Programm bei Befehl X fort wenn A=0.</td></tr>
+			<tr><td><strong><code>springe(0)&nbsp;<em>X</em></code></strong></td><td>PZ:=PZ+X</td><td>Relativer Sprung wenn A=0.</td></tr>
+			
+			<tr><td><strong><code>zu(-)&nbsp;<em>X</em></code></strong></td><td>PZ:=X</td><td>Setze Programm bei Befehl X fort wenn A&lt;0.</td></tr>
+			<tr><td><strong><code>springe(-)&nbsp;<em>X</em></code></strong></td><td>PZ:=PZ+X</td><td>Relativer Sprung wenn A&lt;0.</td></tr>
+			
+			<tr><td><strong><code>stopp</code></strong></td><td></td><td>Hält den Programmablauf an.</td></tr>
+		</table>
+		
+		<p>*) Bei diesen Befehlen wird automatisch der Programmzähler erhöht: PZ:=PZ+1.</p>
+		
+		<p><strong><em>X</em></strong> kann dabei folgendes sein:
+		ein Register (z.B. <code>a</code> oder <code>adr</code>), ein Speicherplatz (z.B. <code>#4</code> oder <code>#0</code>) oder eine Zahl
+		(z.B. <code>5</code> oder <code>-44</code>). Gibt man <code>[adr]</code> an, so wird der Speicherplatz dessen Nummer im adr-Register steht angesprochen.</p>
+		
+		<strong>Beispiele:</strong><br/>
+		<strong><code>lade #4</code></strong>: Läd den Wert aus Speicherplatz Nummer 4 in das Register A.<br/>
+		<strong><code>lade 11</code></strong>: Läd den Wert 11 in das Register A.<br/>
+		<strong><code>schreibe 32</code></strong>: Macht keinen Sinn.<br/>
+		<strong><code>add 3</code></strong>: Addiert 3 auf den aktuellen Wert im Register A.
+	</div>
+
+<a href="http://findicons.com/icon/26194/open?id=414115">open-icon</a>
+</body>
+</html>

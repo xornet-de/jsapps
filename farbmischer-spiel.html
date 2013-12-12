@@ -1,0 +1,255 @@
+﻿<!doctype html>
+<html lang="us">
+<head>
+	<meta charset="utf-8">
+	<title>Farbmischer</title>
+	<link href="css/ui-lightness/jquery-ui-1.10.3.custom.css" rel="stylesheet">
+	<script src="lib/ui/jquery-1.9.1.js"></script>
+	<script src="lib/ui/jquery-ui-1.10.3.custom.js"></script>
+	<script>
+	$(function() {
+		
+		$( "#button" ).button();
+		//$( "#radioset" ).buttonset();
+		
+
+		$( "#dialog" ).dialog({
+			autoOpen: false,
+			width: 400,
+			buttons: [
+				{
+					text: "Ok",
+					click: function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				{
+					text: "Cancel",
+					click: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			]
+		});
+
+		// Link to open the dialog
+		$( "#dialog-link" ).click(function( event ) {
+			$( "#dialog" ).dialog( "open" );
+			event.preventDefault();
+		});
+		
+		var hexDigits = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+		var R=0,G=0,B=0;
+		var RR=Math.floor((Math.random()*255));
+		var RG=Math.floor((Math.random()*255));
+		var RB=Math.floor((Math.random()*255));
+		
+		var grenze = 97;
+
+		$("#colorCanvas1").css("background-color", "rgb("+RR+","+RG+","+RB+")");
+		
+		var updateColor = function() {
+			$("#hexValue").html("Deine Farbe: " + R + " " + G + " " + B);
+			$("#colorCanvas2").css("background-color", "rgb("+R+","+G+","+B+")");
+			var maxDist = Math.sqrt(3*255*255);
+			var dist = Math.sqrt((R-RR)*(R-RR) + (G-RG)*(G-RG) + (B-RB)*(B-RB));
+			dist = 100-(dist/maxDist) *100;
+			$("#distance").html(""+dist+" %");
+			$("#progressbar").progressbar( "option", "value", dist );
+			if (dist>=grenze) {
+				$("#hexValue").html("Deine Farbe: " + R + " " + G + " " + B + " | Lösung: "+RR+" "+RG+" "+RB);
+				$("#erfolg").show();
+			}
+		};
+		
+		// http://api.jqueryui.com/slider/
+		$( "#sliderR" ).slider({
+			range: false,
+			value: 0,
+			max:255,
+			min:0,
+			slide: function( event, ui ) {
+				R = ui.value;
+				updateColor();
+			}
+		});
+		$( "#sliderG" ).slider({
+			range: false,
+			value: 0,
+			max:255,
+			min:0,
+			slide: function( event, ui ) {
+				G = ui.value;
+				updateColor();
+			}
+		});
+		$( "#sliderB" ).slider({
+			range: false,
+			value: 0,
+			max:255,
+			min:0,
+			slide: function( event, ui ) {
+				B = ui.value;
+				updateColor();
+			}
+		});
+		
+		$( "#progressbar" ).progressbar({
+			max:100,
+			value: 0
+		});
+
+		
+		// Hover states on the static widgets
+		$( "#dialog-link, #icons li" ).hover(
+			function() {
+				$( this ).addClass( "ui-state-hover" );
+			},
+			function() {
+				$( this ).removeClass( "ui-state-hover" );
+			}
+		);
+		
+		$("#erfolg").hide();
+		
+		if (!$("#check").is(":checked")) {
+			$("#prozent").hide();
+			grenze = 96;
+		} else {
+			grenze=98;
+		}
+		$("#prozahl").html(grenze);
+		
+		$( "#check" ).button();
+		$( "#check" ).click(function(ev, ui) {
+			if ($(this).is(":checked")) {
+				$("#prozent").show();
+				grenze=98;
+			} else {
+				$("#prozent").hide();
+				grenze = 96;
+			}
+			$("#prozahl").html(grenze);
+		});
+		
+		updateColor();
+	});
+	</script>
+	<style>
+	body{
+		font: 70% "Trebuchet MS", sans-serif;
+		margin: 50px;
+	}
+	.demoHeaders {
+		margin-top: 2em;
+	}
+	#dialog-link {
+		padding: .4em 1em .4em 20px;
+		text-decoration: none;
+		position: relative;
+	}
+	#dialog-link span.ui-icon {
+		margin: 0 5px 0 0;
+		position: absolute;
+		left: .2em;
+		top: 50%;
+		margin-top: -8px;
+	}
+	#icons {
+		margin: 0;
+		padding: 0;
+	}
+	#icons li {
+		margin: 2px;
+		position: relative;
+		padding: 4px 0;
+		cursor: pointer;
+		float: left;
+		list-style: none;
+	}
+	#icons span.ui-icon {
+		float: left;
+		margin: 0 4px;
+	}
+	.fakewindowcontain .ui-widget-overlay {
+		position: absolute;
+	}
+	</style>
+</head>
+<body>
+
+<div style="width:400px;">
+
+<h1>RGB-Farben mischen</h1>
+<p>
+	Versuche mit den Reglern unten die obere Farbe
+	zu erreichen. Für eine neue Aufgabe: Seite neu laden.
+</p>
+
+
+<!--
+<h2 class="demoHeaders">Button</h2>
+<button id="button">A button element</button>
+<form style="margin-top: 1em;">
+	<div id="radioset">
+		<input type="radio" id="radio1" name="radio"><label for="radio1">Choice 1</label>
+		<input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">Choice 2</label>
+		<input type="radio" id="radio3" name="radio"><label for="radio3">Choice 3</label>
+	</div>
+</form>
+-->
+
+
+
+
+<!--
+<h2 class="demoHeaders">Dialog</h2>
+<p><a href="#" id="dialog-link" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Open Dialog</a></p>
+
+<div id="dialog" title="Dialog Title">
+	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>
+-->
+
+
+
+<!-- Slider -->
+	<div id="colorCanvas1" style="width:400px; height:100px;"></div>
+	<div id="colorCanvas2" style="width:400px; height:100px;"></div>
+
+	<div class="ui-widget" id="erfolg">
+		<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
+			<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+			<strong>Super!</strong> <span id="prozahl">99</span> % oder mehr sollte reichen.</p>
+			<p id="loesung"></p>
+		</div>
+	</div>
+
+	<div><span id="hexValue"></span></div>
+	
+	<input type="checkbox" id="check" /><label for="check">Für Langweiler oder ganz Genaue</label>
+	<div id="prozent">
+		<div id="distance"></div>
+		<div id="progressbar"></div>
+	</div>
+	
+	<p>Rot:</p>
+	<div id="sliderR"></div>
+	<p>Grün:</p>
+	<div id="sliderG"></div>
+	<p>Blau:</p>
+	<div id="sliderB"></div>
+</div>
+
+
+<!--
+<br>
+<div class="ui-widget">
+	<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+		<strong>Alert:</strong> Sample ui-state-error style.</p>
+	</div>
+</div>
+-->
+</body>
+</html>

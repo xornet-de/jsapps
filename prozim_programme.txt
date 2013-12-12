@@ -1,0 +1,132 @@
+ADDIEREN (#2 = #0 + #1)
+
+lade #0
+add #1
+schreibe #2
+stopp
+
+
+TAUSCHEN (mit loop, #0 <--> #1, #7 als hilfsspeicher)
+
+lade #0
+schreibe #7
+lade #1
+schreibe #0
+lade #7
+schreibe #1
+zu 0
+stopp
+
+
+MULTIPLIZIEREN (#2 = #0 * #1)
+
+lade 0
+schreibe #2
+lade #0
+schreibe b
+lade b
+zu(0) 12
+sub 1
+schreibe b
+lade #2
+add #1
+schreibe #2
+zu 4
+stop
+
+
+ZÄHLEN (zählt in #0er Schritten und füllt den Speicher damit)
+
+lade #0
+schreibe b
+lade 0
+schreibe adr
+schreibe c
+lade c
+add b
+schreibe c
+schreibe [adr]
+lade adr
+add 1
+schreibe adr
+springe -7
+
+
+
+FIB
+
+#0 = 1
+#1 = 1
+adr = 0
+
+loop:
+b = [adr]
+adr += 1
+b += [adr]
+
+adr += 1
+[adr] = b
+
+adr -= 1
+goto loop
+
+
+
+
+lade 1
+schreibe #0
+schreibe #1
+lade 0
+schreibe adr
+
+
+lade [adr]
+schreibe b
+
+lade adr
+add 1
+schreibe adr
+
+lade b
+add [adr]
+schreibe b
+
+lade adr
+add 1
+schreibe adr
+
+lade b
+schreibe [adr]
+
+lade adr
+sub 1
+schreibe adr
+
+
+Gekürzt:
+
+lade 1
+schreibe #0
+schreibe #1
+lade 0
+schreibe adr
+lade [adr]
+schreibe b
+lade adr
+add 1
+schreibe adr
+lade b
+add [adr]
+schreibe b
+lade adr
+add 1
+schreibe adr
+lade b
+schreibe [adr]
+lade adr
+sub 1
+schreibe adr
+zu 5
+
+
+
